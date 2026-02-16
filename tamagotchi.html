@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Rocket Tamagotchi - Your AI Pet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .tamagotchi-device {
+            width: 100%;
+            max-width: 450px;
+            background: linear-gradient(145deg, #ff6b9d, #c06c84);
+            border-radius: 50px 50px 100px 100px;
+            padding: 30px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                inset 0 -5px 20px rgba(0, 0, 0, 0.2),
+                inset 0 5px 20px rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .screen {
+            background: #9cd38f;
+            border: 8px solid #4a5a4a;
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 400px;
+            box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.05) 0px,
+                transparent 1px,
+                transparent 2px,
+                rgba(0, 0, 0, 0.05) 3px
+            );
+            pointer-events: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title {
+            font-size: 0.7rem;
+            color: #2d3d2d;
+            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.45rem;
+            color: #2d3d2d;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 0.6rem;
+            color: #fff;
+            text-shadow: 1px 1px 0 #2d3d2d;
+        }
+
+        .character-area {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 15px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .rocket-character {
+            font-size: 5rem;
+            animation: float 3s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .rocket-character:hover {
+            transform: scale(1.1);
+        }
+
+        .rocket-character:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .speech-bubble {
+            background: white;
+            border: 3px solid #2d3d2d;
+            border-radius: 15px;
+            padding: 10px 15px;
+            margin-top: 15px;
+            font-size: 0.5rem;
+            color: #2d3d2d;
+            max-width: 90%;
+            position: relative;
+            animation: bubblePop 0.3s ease-out;
+            line-height: 1.4;
+        }
+
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #2d3d2d;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+
+        @keyframes bubblePop {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .status-bar {
+            font-size: 0.5rem;
+            color: #2d3d2d;
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+        }
+
+        .evolution-stage {
+            font-size: 0.55rem;
+            color: #fff;
+            text-shadow: 2px 2px 0 #2d3d2d;
+            margin-top: 10px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            border: 4px solid #4a5a8a;
+            border-radius: 15px;
+            padding: 15px 10px;
+            color: white;
+            font-size: 0.5rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 
+                0 6px 0 #3a4a6a,
+                0 8px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            top: 0;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(145deg, #7689ff, #8657bc);
+            transform: translateY(-2px);
+        }
+
+        .control-btn:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 2px 0 #3a4a6a,
+                0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn .icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .activity-log {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 15px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .activity-log::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .activity-log::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        .activity-item {
+            font-size: 0.4rem;
+            color: #2d3d2d;
+            margin-bottom: 5px;
+            padding: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+        }
+
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.2);
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 5px;
+            border: 2px solid #2d3d2d;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+        }
+
+        .achievement {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            border: 4px solid #fbbf24;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            z-index: 10;
+            animation: achievementPop 2s ease-out forwards;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes achievementPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(-180deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2) rotate(10deg);
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1) rotate(-5deg);
+            }
+            90% {
+                transform: translate(-50%, -50%) scale(1.05) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .achievement-title {
+            font-size: 0.6rem;
+            color: #fbbf24;
+            margin-bottom: 10px;
+        }
+
+        .achievement-text {
+            font-size: 0.5rem;
+            color: #2d3d2d;
+        }
+
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 1rem;
+            animation: particleFloat 2s ease-out forwards;
+        }
+
+        @keyframes particleFloat {
+            to {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .tamagotchi-device {
+                max-width: 100%;
+            }
+            
+            .rocket-character {
+                font-size: 4rem;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tamagotchi-device">
+        <div class="screen">
+            <div class="particles-container" id="particles"></div>
+            
+            <div class="header">
+                <div class="title">ROCKET v1.0</div>
+                <div class="stats-bar">
+                    <div class="stat">
+                        <div class="stat-label">💚 HP</div>
+                        <div class="stat-value" id="happiness">100</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">⚡ NRG</div>
+                        <div class="stat-value" id="energy">100</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">🧠 IQ</div>
+                        <div class="stat-value" id="intelligence">50</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="character-area">
+                <div class="rocket-character" id="rocket">🚀</div>
+                <div class="speech-bubble" id="speech">
+                    Hi! I'm Rocket! Take care of me! 💫
+                </div>
+                <div class="evolution-stage" id="stage">Baby AI</div>
+            </div>
+
+            <div class="status-bar" id="status">
+                Status: 😊 Feeling Great!
+            </div>
+
+            <div style="margin-top: 10px;">
+                <div style="font-size: 0.45rem; color: #2d3d2d; margin-bottom: 3px;">XP Progress</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="xpBar" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="activity-log" id="activityLog">
+                <div class="activity-item">🎮 Tamagotchi initialized!</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="feedRocket()">
+                <span class="icon">🍔</span>
+                FEED<br>DATA
+            </button>
+            <button class="control-btn" onclick="playWithRocket()">
+                <span class="icon">🎮</span>
+                PLAY<br>GAME
+            </button>
+            <button class="control-btn" onclick="askQuestion()">
+                <span class="icon">💭</span>
+                ASK<br>QUESTION
+            </button>
+            <button class="control-btn" onclick="checkStats()">
+                <span class="icon">📊</span>
+                CHECK<br>STATS
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Tamagotchi State
+        let state = {
+            happiness: 100,
+            energy: 100,
+            intelligence: 50,
+            xp: 0,
+            level: 1,
+            stage: 'Baby AI',
+            lastInteraction: Date.now(),
+            interactions: 0,
+            evolutionStage: 0
+        };
+
+        const stages = [
+            { name: 'Baby AI', emoji: '🚀', xpNeeded: 0 },
+            { name: 'Learning AI', emoji: '🤖', xpNeeded: 100 },
+            { name: 'Expert AI', emoji: '🧠', xpNeeded: 300 },
+            { name: 'Genius AI', emoji: '✨', xpNeeded: 600 }
+        ];
+
+        const speeches = {
+            happy: [
+                "I'm learning so much! 🌟",
+                "You're the best! 💖",
+                "This is fun! Let's do more! 🎉",
+                "I feel great! Thanks! 😊"
+            ],
+            thinking: [
+                "Hmm, interesting question... 🤔",
+                "Let me process that... 💭",
+                "Computing... 🔄",
+                "Analyzing data... 📊"
+            ],
+            tired: [
+                "I'm getting sleepy... 😴",
+                "Need... energy... ⚡",
+                "*yawn* So tired... 🥱",
+                "Running low on power... 🔋"
+            ],
+            hungry: [
+                "I need data! 🍔",
+                "Feed me knowledge! 📚",
+                "Hungry for information! 🤤",
+                "Data please! 🙏"
+            ],
+            excited: [
+                "WOOHOO! 🎊",
+                "This is amazing! 🌈",
+                "I'm evolving! ✨",
+                "Level up! 🚀"
+            ]
+        };
+
+        // Load saved state
+        function loadState() {
+            const saved = localStorage.getItem('rocketTamagotchi');
+            if (saved) {
+                state = JSON.parse(saved);
+                updateUI();
+            }
+        }
+
+        // Save state
+        function saveState() {
+            localStorage.setItem('rocketTamagotchi', JSON.stringify(state));
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('happiness').textContent = Math.round(state.happiness);
+            document.getElementById('energy').textContent = Math.round(state.energy);
+            document.getElementById('intelligence').textContent = Math.round(state.intelligence);
+            document.getElementById('stage').textContent = state.stage;
+            
+            const currentStage = stages[state.evolutionStage];
+            document.getElementById('rocket').textContent = currentStage.emoji;
+            
+            const nextStage = stages[state.evolutionStage + 1];
+            if (nextStage) {
+                const progress = (state.xp / nextStage.xpNeeded) * 100;
+                document.getElementById('xpBar').style.width = Math.min(progress, 100) + '%';
+            } else {
+                document.getElementById('xpBar').style.width = '100%';
+            }
+            
+            updateStatus();
+            saveState();
+        }
+
+        // Update status message
+        function updateStatus() {
+            let status = '';
+            if (state.happiness > 80) status = '😊 Feeling Great!';
+            else if (state.happiness > 60) status = '🙂 Pretty Good!';
+            else if (state.happiness > 40) status = '😐 Doing Okay...';
+            else if (state.happiness > 20) status = '😟 Feeling Down...';
+            else status = '😢 Needs Attention!';
+            
+            if (state.energy < 30) status += ' (Tired)';
+            
+            document.getElementById('status').textContent = 'Status: ' + status;
+        }
+
+        // Add activity
+        function addActivity(text) {
+            const log = document.getElementById('activityLog');
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.textContent = text;
+            log.insertBefore(item, log.firstChild);
+            
+            while (log.children.length > 10) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        // Say something
+        function say(category) {
+            const messages = speeches[category];
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            document.getElementById('speech').textContent = message;
+        }
+
+        // Create particles
+        function createParticles(emoji, count = 5) {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.textContent = emoji;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = '60%';
+                container.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 2000);
+            }
+        }
+
+        // Gain XP
+        function gainXP(amount) {
+            state.xp += amount;
+            state.interactions++;
+            
+            const nextStage = stages[state.evolutionStage + 1];
+            if (nextStage && state.xp >= nextStage.xpNeeded) {
+                evolve();
+            }
+            
+            updateUI();
+        }
+
+        // Evolve!
+        function evolve() {
+            if (state.evolutionStage < stages.length - 1) {
+                state.evolutionStage++;
+                state.stage = stages[state.evolutionStage].name;
+                
+                showAchievement('EVOLUTION!', `Rocket evolved to ${state.stage}!`);
+                createParticles('✨', 10);
+                say('excited');
+                addActivity(`🎉 Evolved to ${state.stage}!`);
+                
+                state.happiness = 100;
+                state.energy = 100;
+            }
+        }
+
+        // Show achievement
+        function showAchievement(title, text) {
+            const achievement = document.createElement('div');
+            achievement.className = 'achievement';
+            achievement.innerHTML = `
+                <div class="achievement-title">${title}</div>
+                <div class="achievement-text">${text}</div>
+            `;
+            document.querySelector('.screen').appendChild(achievement);
+            
+            setTimeout(() => achievement.remove(), 3000);
+        }
+
+        // Feed Rocket
+        function feedRocket() {
+            state.energy = Math.min(state.energy + 20, 100);
+            state.intelligence += 5;
+            gainXP(10);
+            
+            say('happy');
+            createParticles('🍔', 3);
+            addActivity('🍔 Fed Rocket some data!');
+            
+            setTimeout(() => say('happy'), 1500);
+        }
+
+        // Play with Rocket
+        function playWithRocket() {
+            state.happiness = Math.min(state.happiness + 25, 100);
+            state.energy = Math.max(state.energy - 10, 0);
+            gainXP(15);
+            
+            say('excited');
+            createParticles('🎮', 5);
+            addActivity('🎮 Played a game with Rocket!');
+            
+            const games = [
+                'We played hide and seek!',
+                'Rocket won at tic-tac-toe!',
+                'We built a sandcastle!',
+                'That was a fun puzzle!'
+            ];
+            setTimeout(() => {
+                document.getElementById('speech').textContent = 
+                    games[Math.floor(Math.random() * games.length)];
+            }, 2000);
+        }
+
+        // Ask Question
+        function askQuestion() {
+            state.intelligence += 10;
+            state.energy = Math.max(state.energy - 5, 0);
+            gainXP(20);
+            
+            say('thinking');
+            createParticles('💭', 3);
+            addActivity('💭 Asked Rocket a question!');
+            
+            const answers = [
+                'Great question! The answer is... 42! 🤓',
+                'Let me check my database... Aha! Found it! ✓',
+                'Interesting! Here\'s what I think... 🧠',
+                'Based on my knowledge... Yes! 📚'
+            ];
+            setTimeout(() => {
+                document.getElementById('speech').textContent = 
+                    answers[Math.floor(Math.random() * answers.length)];
+            }, 2000);
+        }
+
+        // Check Stats
+        function checkStats() {
+            addActivity('📊 Checked Rocket\'s stats!');
+            
+            const total = state.happiness + state.energy + state.intelligence;
+            const avg = Math.round(total / 3);
+            
+            let grade = '';
+            if (avg > 90) grade = 'S';
+            else if (avg > 80) grade = 'A';
+            else if (avg > 70) grade = 'B';
+            else if (avg > 60) grade = 'C';
+            else grade = 'D';
+            
+            document.getElementById('speech').textContent = 
+                `Grade: ${grade} | XP: ${state.xp} | Interactions: ${state.interactions} 📊`;
+            
+            createParticles('📊', 2);
+        }
+
+        // Decay over time
+        function decay() {
+            const timeSinceInteraction = Date.now() - state.lastInteraction;
+            const minutesPassed = timeSinceInteraction / (1000 * 60);
+            
+            if (minutesPassed > 5) {
+                state.happiness = Math.max(state.happiness - 0.5, 0);
+                state.energy = Math.max(state.energy - 0.3, 0);
+            }
+            
+            if (state.happiness < 30) {
+                say('hungry');
+            } else if (state.energy < 30) {
+                say('tired');
+            }
+            
+            updateUI();
+        }
+
+        // Click on Rocket
+        document.getElementById('rocket').addEventListener('click', function() {
+            state.happiness = Math.min(state.happiness + 5, 100);
+            gainXP(2);
+            createParticles('💖', 1);
+            
+            const reactions = ['Hehe! 😊', 'That tickles! 😄', 'Again! Again! 🎉'];
+            document.getElementById('speech').textContent = 
+                reactions[Math.floor(Math.random() * reactions.length)];
+            
+            updateUI();
+        });
+
+        // Initialize
+        loadState();
+        updateUI();
+        setInterval(decay, 60000); // Decay every minute
+        setInterval(() => {
+            state.lastInteraction = Date.now();
+        }, 10000);
+
+        // Random idle animations
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                if (state.energy > 50) {
+                    say('happy');
+                } else {
+                    say('tired');
+                }
+            }
+        }, 15000);
+    </script>
+</body>
+</html>
