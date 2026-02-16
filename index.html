@@ -549,23 +549,109 @@
         <!-- Footer -->
         <div class="footer">
             <p>🚀 Rocket AI • Chief of Staff for Kyle Kilroy</p>
-            <p>Last updated: 2026-02-15 22:00 EST • All systems operational</p>
+            <p id="last-update">Last updated: Loading... • <span id="update-indicator">●</span> Live Updates Active</p>
         </div>
     </div>
 
     <script>
-        // Add current time
-        setInterval(() => {
-            const now = new Date();
-            const timeString = now.toLocaleString('en-US', {
-                timeZone: 'America/New_York',
-                hour12: false
-            });
-            console.log('Dashboard active:', timeString);
-        }, 60000);
-
-        // Animate stat numbers on load
+        let lastFetchTime = Date.now();
+        
+        // Fetch and update dashboard data
+        async function updateDashboard() {
+            try {
+                const indicator = document.getElementById('update-indicator');
+                indicator.style.color = 'var(--warning)'; // Yellow while fetching
+                
+                const response = await fetch('/status.json?t=' + Date.now());
+                const data = await response.json();
+                
+                // Update stats
+                const statCards = document.querySelectorAll('.stat-card');
+                statCards[0].querySelector('.stat-value').textContent = data.stats.sitesDeployed;
+                statCards[1].querySelector('.stat-value').textContent = data.stats.githubRepos;
+                statCards[2].querySelector('.stat-value').textContent = data.stats.cronJobs;
+                statCards[3].querySelector('.stat-value').textContent = data.stats.systemHealth + '%';
+                
+                // Update activity feed
+                const activityFeed = document.querySelector('.activity-feed');
+                activityFeed.innerHTML = data.activities.map(activity => `
+                    <div class="activity-item">
+                        <div class="activity-time">${activity.time}</div>
+                        <div class="activity-desc">${activity.description}</div>
+                    </div>
+                `).join('');
+                
+                // Update projects
+                const projectGrid = document.querySelector('.project-grid');
+                projectGrid.innerHTML = data.projects.map(project => {
+                    const statusClass = project.status === 'live' ? 'status-live' : 
+                                       project.status === 'building' ? 'status-building' : 
+                                       'status-planned';
+                    const statusText = project.status.toUpperCase();
+                    
+                    return `
+                        <div class="project-card">
+                            <div class="project-header">
+                                <div class="project-name">${project.name}</div>
+                                <span class="project-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <div class="project-desc">${project.description}</div>
+                            <a href="${project.url}" class="project-link" target="_blank">
+                                → ${project.url.replace('https://', '')}
+                            </a>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Update system health
+                const healthGrid = document.querySelector('.health-grid');
+                healthGrid.innerHTML = data.systemHealth.map(item => {
+                    const statusClass = item.status === 'ok' ? 'health-ok' : 
+                                       item.status === 'warning' ? 'health-warning' : 
+                                       'health-error';
+                    
+                    return `
+                        <div class="health-item">
+                            <span class="health-label">${item.label}</span>
+                            <span class="health-status ${statusClass}"></span>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Update footer timestamp
+                const lastUpdate = new Date(data.lastUpdate);
+                const timeString = lastUpdate.toLocaleString('en-US', {
+                    timeZone: 'America/New_York',
+                    month: '2-digit',
+                    day: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                }).replace(',', ' •');
+                
+                document.getElementById('last-update').innerHTML = 
+                    `Last updated: ${timeString} EST • <span id="update-indicator">●</span> Live Updates Active`;
+                
+                // Green indicator = success
+                setTimeout(() => {
+                    const newIndicator = document.getElementById('update-indicator');
+                    if (newIndicator) newIndicator.style.color = 'var(--success)';
+                }, 200);
+                
+                lastFetchTime = Date.now();
+                console.log('Dashboard updated:', new Date().toLocaleTimeString());
+                
+            } catch (error) {
+                console.error('Failed to update dashboard:', error);
+                const indicator = document.getElementById('update-indicator');
+                if (indicator) indicator.style.color = 'var(--error)'; // Red on error
+            }
+        }
+        
+        // Initial load
         document.addEventListener('DOMContentLoaded', () => {
+            // Animate stat numbers on first load
             const stats = document.querySelectorAll('.stat-value');
             stats.forEach(stat => {
                 const value = stat.textContent;
@@ -584,7 +670,22 @@
                     }, 20);
                 }
             });
+            
+            // Fetch fresh data after animation
+            setTimeout(updateDashboard, 1000);
         });
+        
+        // Auto-update every 60 seconds
+        setInterval(updateDashboard, 60000);
+        
+        // Visual heartbeat
+        setInterval(() => {
+            const timeSinceUpdate = Date.now() - lastFetchTime;
+            const indicator = document.getElementById('update-indicator');
+            if (indicator && timeSinceUpdate < 120000) { // Within 2 minutes
+                indicator.style.animation = 'pulse 2s ease-in-out infinite';
+            }
+        }, 5000);
     </script>
 </body>
 </html>
