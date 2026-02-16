@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-02-16T03:34:58.176-05:00",
+  "lastUpdate": "2026-02-16T03:35:02.089-05:00",
   "stats": {
     "sitesDeployed": 4,
     "githubRepos": 3,
@@ -39,7 +39,7 @@
     },
     {
       "name": "Dr Kilroy",
-      "status": "planned",
+      "status": "building",
       "description": "Test/experimental site for R&D projects.",
       "url": "https://drkilroy.com"
     }
