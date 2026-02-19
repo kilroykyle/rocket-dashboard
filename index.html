@@ -330,7 +330,10 @@
         
         async function loadDashboard() {
             try {
-                const response = await fetch('/dashboard.json');
+                const response = await fetch('./dashboard.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
                 const data = await response.json();
                 
                 // Last updated
@@ -439,6 +442,8 @@
                 
             } catch (error) {
                 console.error('Failed to load dashboard:', error);
+                document.getElementById('lastUpdated').textContent = `Error loading dashboard: ${error.message}`;
+                document.getElementById('lastUpdated').style.color = '#ff4444';
             }
         }
         
