@@ -304,28 +304,44 @@
     
     <script>
         function formatTime(isoString) {
-            const date = new Date(isoString);
-            const now = new Date();
-            const diff = now - date;
-            const minutes = Math.floor(diff / 60000);
-            const hours = Math.floor(minutes / 60);
-            const days = Math.floor(hours / 24);
-            
-            if (minutes < 1) return 'Just now';
-            if (minutes < 60) return `${minutes}m ago`;
-            if (hours < 24) return `${hours}h ago`;
-            return `${days}d ago`;
+            try {
+                const date = new Date(isoString);
+                if (isNaN(date.getTime())) {
+                    return 'Invalid date';
+                }
+                const now = new Date();
+                const diff = now - date;
+                const minutes = Math.floor(diff / 60000);
+                const hours = Math.floor(minutes / 60);
+                const days = Math.floor(hours / 24);
+                
+                if (minutes < 1) return 'Just now';
+                if (minutes < 60) return `${minutes}m ago`;
+                if (hours < 24) return `${hours}h ago`;
+                return `${days}d ago`;
+            } catch (e) {
+                return 'Invalid date';
+            }
         }
         
         function formatCronTime(isoString) {
-            if (isoString.includes('Every')) return isoString;
-            const date = new Date(isoString);
-            return date.toLocaleString('en-US', { 
-                weekday: 'short', 
-                hour: 'numeric', 
-                minute: '2-digit',
-                hour12: true 
-            });
+            if (!isoString || isoString.includes('Every') || isoString.includes('every')) {
+                return isoString;
+            }
+            try {
+                const date = new Date(isoString);
+                if (isNaN(date.getTime())) {
+                    return isoString;
+                }
+                return date.toLocaleString('en-US', { 
+                    weekday: 'short', 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            } catch (e) {
+                return isoString;
+            }
         }
         
         async function loadDashboard() {
