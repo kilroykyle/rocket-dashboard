@@ -1,0 +1,120 @@
+{
+  "lastUpdated": "2026-02-19T05:40:00Z",
+  "status": {
+    "rocket": "Autonomous monitoring (Twitter, heartbeats, research)",
+    "kyle": "Working on photos + reviews for website",
+    "blocked": "Client emails blocked on photos/reviews completion"
+  },
+  "tasks": {
+    "kyle": [
+      {
+        "task": "Get 10-15 work photos",
+        "status": "in_progress",
+        "deadline": "Friday EOD",
+        "priority": "high"
+      },
+      {
+        "task": "Request 3-5 Google reviews",
+        "status": "pending",
+        "deadline": "Sunday EOD",
+        "priority": "high"
+      },
+      {
+        "task": "GBP verification (submit)",
+        "status": "pending",
+        "deadline": "This week",
+        "priority": "medium"
+      },
+      {
+        "task": "Nextdoor profile setup",
+        "status": "in_progress",
+        "deadline": "Friday EOD",
+        "priority": "medium"
+      }
+    ],
+    "rocket": [
+      {
+        "task": "Conway research (9/15 tasks remaining)",
+        "status": "in_progress",
+        "deadline": "Ongoing",
+        "priority": "low"
+      },
+      {
+        "task": "Twitter monitoring (43 accounts)",
+        "status": "active",
+        "deadline": "Daily",
+        "priority": "medium"
+      },
+      {
+        "task": "Dashboard deployment",
+        "status": "in_progress",
+        "deadline": "Tonight",
+        "priority": "high"
+      }
+    ]
+  },
+  "cronSchedule": [
+    {
+      "task": "Twitter Account Discovery",
+      "time": "2026-02-19T19:30:00Z",
+      "description": "Daily scan of monitored accounts for new discoveries"
+    },
+    {
+      "task": "Daily News Briefing",
+      "time": "2026-02-20T17:00:00Z",
+      "description": "Market signals and congressional trades"
+    },
+    {
+      "task": "Heartbeat Check",
+      "time": "Every 30 minutes",
+      "description": "Autonomous task execution and monitoring"
+    }
+  ],
+  "recentActivity": [
+    {
+      "timestamp": "2026-02-19T05:40:00Z",
+      "action": "Building rocket.kylekilroy.com dashboard",
+      "category": "infrastructure"
+    },
+    {
+      "timestamp": "2026-02-19T05:16:00Z",
+      "action": "Analyzed Mission Control concept (Alex Finn)",
+      "category": "research"
+    },
+    {
+      "timestamp": "2026-02-19T04:08:00Z",
+      "action": "Updated Kyle context: IBEW Local 103, $171K W-2 income",
+      "category": "context"
+    },
+    {
+      "timestamp": "2026-02-19T03:56:00Z",
+      "action": "Coaching assessment: Human 3.0 framework integration",
+      "category": "coaching"
+    },
+    {
+      "timestamp": "2026-02-19T00:35:00Z",
+      "action": "Completed permit data sources research (11KB)",
+      "category": "research"
+    }
+  ],
+  "quickStats": {
+    "btcPrice": "$66,155",
+    "btcChange24h": "-2.95%",
+    "twitterAccounts": 43,
+    "contentPagesReady": 10,
+    "researchFilesCreated": 55,
+    "conwayProgress": "40% (6/15 tasks)"
+  },
+  "blockers": {
+    "client_emails": "Blocked on photos + reviews",
+    "content_deployment": "Ready but blocked on photos",
+    "twitter_vetting": "6 accounts need manual verification"
+  },
+  "milestones": {
+    "v1_integration": "✅ Complete (100%)",
+    "content_creation": "✅ Complete (10/10 pages)",
+    "skill_graph_poc": "✅ Complete (10 nodes)",
+    "conway_research": "🟡 In Progress (6/15 tasks)",
+    "permit_monitoring_agent": "🟡 Ready to build (specs complete)"
+  }
+}

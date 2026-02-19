@@ -3,689 +3,450 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Rocket Status Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <title>🚀 Rocket Mission Control</title>
     <style>
-        :root {
-            --bg: #0a0a0f;
-            --bg-2: #141420;
-            --bg-3: #1e1e2e;
-            --primary: #667eea;
-            --primary-dark: #5568d3;
-            --accent: #f093fb;
-            --success: #4ade80;
-            --warning: #fbbf24;
-            --error: #ef4444;
-            --text: #e5e7eb;
-            --text-dim: #9ca3af;
-            --border: rgba(255,255,255,0.1);
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            padding: 16px;
             line-height: 1.6;
-            overflow-x: hidden;
         }
-
+        
         .container {
-            max-width: 1400px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 40px 20px;
         }
-
-        /* Header */
-        .header {
+        
+        header {
             text-align: center;
-            margin-bottom: 50px;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 20px;
-            position: relative;
-            overflow: hidden;
+            padding: 20px 0;
+            border-bottom: 2px solid #333;
+            margin-bottom: 24px;
         }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(255,255,255,0.05) 10px,
-                rgba(255,255,255,0.05) 20px
-            );
-            animation: slide 20s linear infinite;
+        
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
         }
-
-        @keyframes slide {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
+        
+        .last-updated {
+            color: #888;
+            font-size: 14px;
         }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
+        
+        .section {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #333;
         }
-
-        .header h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
-        .header .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
+        
+        .status-grid {
+            display: grid;
+            gap: 12px;
         }
-
+        
+        .status-item {
+            padding: 12px;
+            background: #252525;
+            border-radius: 8px;
+            border-left: 4px solid #4a9eff;
+        }
+        
+        .status-item strong {
+            color: #4a9eff;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .task {
+            padding: 12px;
+            background: #252525;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid #888;
+        }
+        
+        .task.high {
+            border-left-color: #ff4444;
+        }
+        
+        .task.medium {
+            border-left-color: #ffaa00;
+        }
+        
+        .task.low {
+            border-left-color: #4a9eff;
+        }
+        
+        .task.done {
+            border-left-color: #44ff44;
+            opacity: 0.6;
+        }
+        
+        .task.in_progress {
+            border-left-color: #ffaa00;
+        }
+        
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .task-meta {
+            font-size: 13px;
+            color: #888;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
         .status-badge {
             display: inline-block;
-            padding: 8px 20px;
-            background: var(--success);
-            color: var(--bg);
-            border-radius: 20px;
-            font-weight: 700;
-            margin-top: 15px;
-            animation: pulse 2s ease-in-out infinite;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        
+        .status-badge.done {
+            background: #44ff44;
+            color: #000;
         }
-
-        /* Stats Grid */
+        
+        .status-badge.in_progress {
+            background: #ffaa00;
+            color: #000;
+        }
+        
+        .status-badge.pending {
+            background: #888;
+            color: #fff;
+        }
+        
+        .status-badge.active {
+            background: #4a9eff;
+            color: #fff;
+        }
+        
+        .cron-item {
+            padding: 10px;
+            background: #252525;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .cron-time {
+            color: #4a9eff;
+            font-weight: 500;
+        }
+        
+        .activity-item {
+            padding: 10px;
+            background: #252525;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .activity-time {
+            color: #888;
+            font-size: 12px;
+        }
+        
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
         }
-
+        
         .stat-card {
-            background: var(--bg-2);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Section */
-        .section {
-            background: var(--bg-2);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* Project Cards */
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .project-card {
-            background: var(--bg-3);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-
-        .project-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .project-name {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .project-status {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-live { background: var(--success); color: var(--bg); }
-        .status-building { background: var(--warning); color: var(--bg); }
-        .status-planned { background: var(--text-dim); color: var(--bg); }
-
-        .project-desc {
-            color: var(--text-dim);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        .project-link {
-            display: inline-block;
-            color: var(--primary);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.3s ease;
-        }
-
-        .project-link:hover {
-            color: var(--accent);
-        }
-
-        /* Activity Feed */
-        .activity-feed {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .activity-item {
-            background: var(--bg-3);
-            border-left: 3px solid var(--primary);
-            padding: 15px;
-            margin-bottom: 15px;
+            background: #252525;
+            padding: 12px;
             border-radius: 8px;
-        }
-
-        .activity-time {
-            color: var(--text-dim);
-            font-size: 0.85rem;
-            margin-bottom: 5px;
-        }
-
-        .activity-desc {
-            font-size: 0.95rem;
-        }
-
-        /* System Health */
-        .health-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .health-item {
-            background: var(--bg-3);
-            border-radius: 10px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .health-label {
-            font-size: 0.9rem;
-            color: var(--text-dim);
-        }
-
-        .health-status {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .health-ok { background: var(--success); }
-        .health-warning { background: var(--warning); }
-        .health-error { background: var(--error); }
-
-        /* Footer */
-        .footer {
             text-align: center;
-            margin-top: 50px;
-            padding: 20px;
-            color: var(--text-dim);
-            font-size: 0.85rem;
         }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #4a9eff;
+            margin-bottom: 4px;
         }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-2);
+        
+        .stat-label {
+            font-size: 12px;
+            color: #888;
         }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
+        
+        .blocker {
+            background: #2a1a1a;
+            border-left: 4px solid #ff4444;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent);
+        
+        .milestone {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #252525;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2rem;
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
             }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+            
+            .section {
+                padding: 16px;
+            }
+            
+            .section-title {
+                font-size: 16px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-content">
-                <h1>🚀 Rocket Status Dashboard</h1>
-                <p class="subtitle">AI Chief of Staff • Signal Processor • Builder</p>
-                <span class="status-badge">● ONLINE & OPERATIONAL</span>
-            </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-value">4</div>
-                <div class="stat-label">Sites Deployed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">3</div>
-                <div class="stat-label">GitHub Repos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">1</div>
-                <div class="stat-label">Cron Jobs Active</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">100%</div>
-                <div class="stat-label">System Health</div>
-            </div>
-        </div>
-
-        <!-- Active Projects -->
+        <header>
+            <h1>🚀 Rocket Mission Control</h1>
+            <div class="last-updated" id="lastUpdated">Loading...</div>
+        </header>
+        
         <div class="section">
-            <h2 class="section-title">🏗️ Active Projects</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-name">Rosary Tracker</div>
-                        <span class="project-status status-live">LIVE</span>
-                    </div>
-                    <div class="project-desc">
-                        Cross-device prayer tracker with KV persistence. Auto-sync every 10 seconds.
-                    </div>
-                    <a href="https://rosary.kylekilroy.com" class="project-link" target="_blank">
-                        → rosary.kylekilroy.com
-                    </a>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-name">Rocket Dashboard</div>
-                        <span class="project-status status-live">LIVE</span>
-                    </div>
-                    <div class="project-desc">
-                        Real-time status dashboard tracking activities and projects.
-                    </div>
-                    <a href="https://rocket.kylekilroy.com" class="project-link" target="_blank">
-                        → rocket.kylekilroy.com
-                    </a>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-name">Tamagotchi Pet</div>
-                        <span class="project-status status-live">LIVE</span>
-                    </div>
-                    <div class="project-desc">
-                        Virtual pet version of Rocket. Feed, play, train. Retro handheld UI.
-                    </div>
-                    <a href="https://tamagotchi.kylekilroy.com" class="project-link" target="_blank">
-                        → tamagotchi.kylekilroy.com
-                    </a>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-name">Morawski Excavating</div>
-                        <span class="project-status status-live">LIVE</span>
-                    </div>
-                    <div class="project-desc">
-                        Professional excavation company site with video backgrounds.
-                    </div>
-                    <a href="https://morawskis.com" class="project-link" target="_blank">
-                        → morawskis.com
-                    </a>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-name">Kilroy Electric</div>
-                        <span class="project-status status-planned">PENDING</span>
-                    </div>
-                    <div class="project-desc">
-                        Main electrical business site. 58 portfolio photos ready to deploy.
-                    </div>
-                    <a href="https://kylekilroy.com" class="project-link" target="_blank">
-                        → kylekilroy.com
-                    </a>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-header">
-                        <div class="project-name">Dr Kilroy</div>
-                        <span class="project-status status-planned">PENDING</span>
-                    </div>
-                    <div class="project-desc">
-                        Test/experimental site for R&D projects.
-                    </div>
-                    <a href="https://drkilroy.com" class="project-link" target="_blank">
-                        → drkilroy.com
-                    </a>
+            <div class="section-title">📊 Current Status</div>
+            <div class="status-grid" id="statusGrid">
+                <div class="status-item">
+                    <strong>Loading...</strong>
                 </div>
             </div>
         </div>
-
-        <!-- System Health -->
+        
         <div class="section">
-            <h2 class="section-title">💓 System Health</h2>
-            <div class="health-grid">
-                <div class="health-item">
-                    <span class="health-label">Daily Briefing</span>
-                    <span class="health-status health-ok"></span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">Cloudflare Pages</span>
-                    <span class="health-status health-ok"></span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">GitHub Sync</span>
-                    <span class="health-status health-ok"></span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">KV Storage</span>
-                    <span class="health-status health-ok"></span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">Crypto Scraper</span>
-                    <span class="health-status health-ok"></span>
-                </div>
-                <div class="health-item">
-                    <span class="health-label">Wrangler CLI</span>
-                    <span class="health-status health-ok"></span>
-                </div>
+            <div class="section-title">🎯 Your Tasks</div>
+            <div id="kyleTasks">
+                <div class="task">Loading...</div>
             </div>
         </div>
-
-        <!-- Recent Activity -->
+        
         <div class="section">
-            <h2 class="section-title">📋 Recent Activity</h2>
-            <div class="activity-feed">
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-15 21:57 EST</div>
-                    <div class="activity-desc">✅ Deployed rocket.kylekilroy.com and tamagotchi.kylekilroy.com to Cloudflare Pages</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-15 21:45 EST</div>
-                    <div class="activity-desc">✅ Created GitHub repo for Morawski Excavating and deployed to morawskis.com</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-15 21:31 EST</div>
-                    <div class="activity-desc">✅ Recovered Rocket Dashboard and Tamagotchi projects from v1 workspace</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-15 20:17 EST</div>
-                    <div class="activity-desc">✅ Deployed rosary.kylekilroy.com with KV persistence and cross-device sync</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-15 13:33 EST</div>
-                    <div class="activity-desc">✅ Upgraded Rosary backend with Cloudflare KV for persistent storage</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-15 10:18 EST</div>
-                    <div class="activity-desc">✅ Located and recovered Rosary Tracker v2 from old workspace</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-15 06:02 EST</div>
-                    <div class="activity-desc">✅ Daily news briefing posted to Discord #daily-briefing (11 topics covered)</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-14 23:34 EST</div>
-                    <div class="activity-desc">✅ Configured Cloudflare API access for all 4 domains</div>
-                </div>
-                <div class="activity-item">
-                    <div class="activity-time">2026-02-14 22:09 EST</div>
-                    <div class="activity-desc">✅ Built and deployed daily briefing system with cron automation</div>
-                </div>
+            <div class="section-title">🤖 Rocket's Tasks</div>
+            <div id="rocketTasks">
+                <div class="task">Loading...</div>
             </div>
         </div>
-
-        <!-- Infrastructure -->
+        
         <div class="section">
-            <h2 class="section-title">🏗️ Infrastructure</h2>
-            <div class="project-grid">
-                <div class="project-card">
-                    <div class="project-name">Cloudflare Zones</div>
-                    <div class="project-desc">
-                        • kylekilroy.com<br>
-                        • kilroy-construction.com<br>
-                        • morawskis.com<br>
-                        • drkilroy.com
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-name">GitHub Repositories</div>
-                    <div class="project-desc">
-                        • rosary-kylekilroy<br>
-                        • rocket-dashboard<br>
-                        • morawskis-excavating
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-name">Automation</div>
-                    <div class="project-desc">
-                        • Daily briefing (6:00 AM EST)<br>
-                        • Crypto signal scraper<br>
-                        • Kalshi market monitor
-                    </div>
-                </div>
-                <div class="project-card">
-                    <div class="project-name">Storage</div>
-                    <div class="project-desc">
-                        • Cloudflare KV (Rosary data)<br>
-                        • GitHub repos (code)<br>
-                        • Local workspace (development)
-                    </div>
+            <div class="section-title">⏰ Scheduled Tasks</div>
+            <div id="cronSchedule">
+                <div class="cron-item">Loading...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">🚧 Blockers</div>
+            <div id="blockers">
+                <div class="blocker">Loading...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">📈 Quick Stats</div>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-value">...</div>
+                    <div class="stat-label">Loading</div>
                 </div>
             </div>
         </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p>🚀 Rocket AI • Chief of Staff for Kyle Kilroy</p>
-            <p id="last-update">Last updated: Loading... • <span id="update-indicator">●</span> Live Updates Active</p>
+        
+        <div class="section">
+            <div class="section-title">🏆 Milestones</div>
+            <div id="milestones">
+                <div class="milestone">Loading...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-title">📝 Recent Activity</div>
+            <div id="recentActivity">
+                <div class="activity-item">Loading...</div>
+            </div>
         </div>
     </div>
-
+    
     <script>
-        let lastFetchTime = Date.now();
+        function formatTime(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            return `${days}d ago`;
+        }
         
-        // Fetch and update dashboard data
-        async function updateDashboard() {
+        function formatCronTime(isoString) {
+            if (isoString.includes('Every')) return isoString;
+            const date = new Date(isoString);
+            return date.toLocaleString('en-US', { 
+                weekday: 'short', 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+        
+        async function loadDashboard() {
             try {
-                const indicator = document.getElementById('update-indicator');
-                indicator.style.color = 'var(--warning)'; // Yellow while fetching
-                
-                const response = await fetch('/status.json?t=' + Date.now());
+                const response = await fetch('/dashboard.json');
                 const data = await response.json();
                 
-                // Update stats
-                const statCards = document.querySelectorAll('.stat-card');
-                statCards[0].querySelector('.stat-value').textContent = data.stats.sitesDeployed;
-                statCards[1].querySelector('.stat-value').textContent = data.stats.githubRepos;
-                statCards[2].querySelector('.stat-value').textContent = data.stats.cronJobs;
-                statCards[3].querySelector('.stat-value').textContent = data.stats.systemHealth + '%';
+                // Last updated
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${formatTime(data.lastUpdated)}`;
                 
-                // Update activity feed
-                const activityFeed = document.querySelector('.activity-feed');
-                activityFeed.innerHTML = data.activities.map(activity => `
-                    <div class="activity-item">
-                        <div class="activity-time">${activity.time}</div>
-                        <div class="activity-desc">${activity.description}</div>
+                // Status
+                const statusGrid = document.getElementById('statusGrid');
+                statusGrid.innerHTML = `
+                    <div class="status-item">
+                        <strong>Rocket:</strong>
+                        ${data.status.rocket}
+                    </div>
+                    <div class="status-item">
+                        <strong>Kyle:</strong>
+                        ${data.status.kyle}
+                    </div>
+                    <div class="status-item" style="border-left-color: #ff4444;">
+                        <strong>Blocked:</strong>
+                        ${data.status.blocked}
+                    </div>
+                `;
+                
+                // Kyle's tasks
+                const kyleTasks = document.getElementById('kyleTasks');
+                kyleTasks.innerHTML = data.tasks.kyle.map(task => `
+                    <div class="task ${task.priority} ${task.status}">
+                        <div class="task-title">${task.task}</div>
+                        <div class="task-meta">
+                            <span class="status-badge ${task.status}">${task.status.replace('_', ' ')}</span>
+                            <span>📅 ${task.deadline}</span>
+                        </div>
                     </div>
                 `).join('');
                 
-                // Update projects
-                const projectGrid = document.querySelector('.project-grid');
-                projectGrid.innerHTML = data.projects.map(project => {
-                    const statusClass = project.status === 'live' ? 'status-live' : 
-                                       project.status === 'building' ? 'status-building' : 
-                                       'status-planned';
-                    const statusText = project.status.toUpperCase();
-                    
-                    return `
-                        <div class="project-card">
-                            <div class="project-header">
-                                <div class="project-name">${project.name}</div>
-                                <span class="project-status ${statusClass}">${statusText}</span>
-                            </div>
-                            <div class="project-desc">${project.description}</div>
-                            <a href="${project.url}" class="project-link" target="_blank">
-                                → ${project.url.replace('https://', '')}
-                            </a>
+                // Rocket's tasks
+                const rocketTasks = document.getElementById('rocketTasks');
+                rocketTasks.innerHTML = data.tasks.rocket.map(task => `
+                    <div class="task ${task.priority} ${task.status}">
+                        <div class="task-title">${task.task}</div>
+                        <div class="task-meta">
+                            <span class="status-badge ${task.status}">${task.status.replace('_', ' ')}</span>
+                            <span>📅 ${task.deadline}</span>
                         </div>
-                    `;
-                }).join('');
+                    </div>
+                `).join('');
                 
-                // Update system health
-                const healthGrid = document.querySelector('.health-grid');
-                healthGrid.innerHTML = data.systemHealth.map(item => {
-                    const statusClass = item.status === 'ok' ? 'health-ok' : 
-                                       item.status === 'warning' ? 'health-warning' : 
-                                       'health-error';
-                    
-                    return `
-                        <div class="health-item">
-                            <span class="health-label">${item.label}</span>
-                            <span class="health-status ${statusClass}"></span>
+                // Cron schedule
+                const cronSchedule = document.getElementById('cronSchedule');
+                cronSchedule.innerHTML = data.cronSchedule.map(cron => `
+                    <div class="cron-item">
+                        <div><span class="cron-time">${formatCronTime(cron.time)}</span> - ${cron.task}</div>
+                        <div style="color: #888; font-size: 12px; margin-top: 4px;">${cron.description}</div>
+                    </div>
+                `).join('');
+                
+                // Blockers
+                const blockers = document.getElementById('blockers');
+                blockers.innerHTML = Object.entries(data.blockers).map(([key, value]) => `
+                    <div class="blocker">
+                        <strong>${key.replace('_', ' ')}:</strong> ${value}
+                    </div>
+                `).join('');
+                
+                // Stats
+                const statsGrid = document.getElementById('statsGrid');
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-value">${data.quickStats.btcPrice}</div>
+                        <div class="stat-label">Bitcoin</div>
+                        <div style="font-size: 12px; color: ${data.quickStats.btcChange24h.startsWith('-') ? '#ff4444' : '#44ff44'}; margin-top: 4px;">
+                            ${data.quickStats.btcChange24h}
                         </div>
-                    `;
-                }).join('');
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.quickStats.twitterAccounts}</div>
+                        <div class="stat-label">Twitter Accounts</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.quickStats.contentPagesReady}</div>
+                        <div class="stat-label">Content Pages</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${data.quickStats.conwayProgress}</div>
+                        <div class="stat-label">Conway Research</div>
+                    </div>
+                `;
                 
-                // Update footer timestamp
-                const lastUpdate = new Date(data.lastUpdate);
-                const timeString = lastUpdate.toLocaleString('en-US', {
-                    timeZone: 'America/New_York',
-                    month: '2-digit',
-                    day: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                }).replace(',', ' •');
+                // Milestones
+                const milestones = document.getElementById('milestones');
+                milestones.innerHTML = Object.entries(data.milestones).map(([key, value]) => `
+                    <div class="milestone">
+                        <span style="font-size: 18px;">${value.split(' ')[0]}</span>
+                        <span>${key.replace(/_/g, ' ')} - ${value.substring(3)}</span>
+                    </div>
+                `).join('');
                 
-                document.getElementById('last-update').innerHTML = 
-                    `Last updated: ${timeString} EST • <span id="update-indicator">●</span> Live Updates Active`;
-                
-                // Green indicator = success
-                setTimeout(() => {
-                    const newIndicator = document.getElementById('update-indicator');
-                    if (newIndicator) newIndicator.style.color = 'var(--success)';
-                }, 200);
-                
-                lastFetchTime = Date.now();
-                console.log('Dashboard updated:', new Date().toLocaleTimeString());
+                // Recent activity
+                const recentActivity = document.getElementById('recentActivity');
+                recentActivity.innerHTML = data.recentActivity.slice(0, 5).map(activity => `
+                    <div class="activity-item">
+                        <div>${activity.action}</div>
+                        <div class="activity-time">${formatTime(activity.timestamp)} • ${activity.category}</div>
+                    </div>
+                `).join('');
                 
             } catch (error) {
-                console.error('Failed to update dashboard:', error);
-                const indicator = document.getElementById('update-indicator');
-                if (indicator) indicator.style.color = 'var(--error)'; // Red on error
+                console.error('Failed to load dashboard:', error);
             }
         }
         
-        // Initial load
-        document.addEventListener('DOMContentLoaded', () => {
-            // Animate stat numbers on first load
-            const stats = document.querySelectorAll('.stat-value');
-            stats.forEach(stat => {
-                const value = stat.textContent;
-                if (!isNaN(value)) {
-                    let current = 0;
-                    const target = parseInt(value);
-                    const increment = target / 50;
-                    const timer = setInterval(() => {
-                        current += increment;
-                        if (current >= target) {
-                            stat.textContent = target;
-                            clearInterval(timer);
-                        } else {
-                            stat.textContent = Math.floor(current);
-                        }
-                    }, 20);
-                }
-            });
-            
-            // Fetch fresh data after animation
-            setTimeout(updateDashboard, 1000);
-        });
+        // Load dashboard on page load
+        loadDashboard();
         
-        // Auto-update every 60 seconds
-        setInterval(updateDashboard, 60000);
-        
-        // Visual heartbeat
-        setInterval(() => {
-            const timeSinceUpdate = Date.now() - lastFetchTime;
-            const indicator = document.getElementById('update-indicator');
-            if (indicator && timeSinceUpdate < 120000) { // Within 2 minutes
-                indicator.style.animation = 'pulse 2s ease-in-out infinite';
-            }
-        }, 5000);
+        // Auto-refresh every 60 seconds
+        setInterval(loadDashboard, 60000);
     </script>
 </body>
 </html>
