@@ -424,12 +424,17 @@
                 
                 // Milestones
                 const milestones = document.getElementById('milestones');
-                milestones.innerHTML = Object.entries(data.milestones).map(([key, value]) => `
-                    <div class="milestone">
-                        <span style="font-size: 18px;">${value.split(' ')[0]}</span>
-                        <span>${key.replace(/_/g, ' ')} - ${value.substring(3)}</span>
-                    </div>
-                `).join('');
+                milestones.innerHTML = Object.entries(data.milestones).map(([key, value]) => {
+                    const parts = value.split(' ');
+                    const emoji = parts[0];
+                    const rest = parts.slice(1).join(' ');
+                    return `
+                        <div class="milestone">
+                            <span style="font-size: 18px;">${emoji}</span>
+                            <span>${key.replace(/_/g, ' ')} - ${rest}</span>
+                        </div>
+                    `;
+                }).join('');
                 
                 // Recent activity
                 const recentActivity = document.getElementById('recentActivity');
