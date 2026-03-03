@@ -1,478 +1,140 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Rocket Mission Control</title>
+    <title>🚀 Rocket Status Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        error: '#EF4444',
+                        background: '#0F172A',
+                        surface: '#1E293B',
+                        'surface-light': '#334155'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #0f0f0f;
-            color: #e0e0e0;
-            padding: 16px;
-            line-height: 1.6;
+        .pulse-slow {
+            animation: pulse-slow 2s ease-in-out infinite;
         }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        
-        header {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 2px solid #333;
-            margin-bottom: 24px;
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
-        
-        header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
+        .progress-bar {
+            transition: width 1s ease-out;
         }
-        
-        .last-updated {
-            color: #888;
-            font-size: 14px;
-        }
-        
-        .section {
-            background: #1a1a1a;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #333;
-        }
-        
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .status-grid {
-            display: grid;
-            gap: 12px;
-        }
-        
-        .status-item {
-            padding: 12px;
-            background: #252525;
-            border-radius: 8px;
-            border-left: 4px solid #4a9eff;
-        }
-        
-        .status-item strong {
-            color: #4a9eff;
-            display: block;
-            margin-bottom: 4px;
-        }
-        
-        .task {
-            padding: 12px;
-            background: #252525;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 4px solid #888;
-        }
-        
-        .task.high {
-            border-left-color: #ff4444;
-        }
-        
-        .task.medium {
-            border-left-color: #ffaa00;
-        }
-        
-        .task.low {
-            border-left-color: #4a9eff;
-        }
-        
-        .task.done {
-            border-left-color: #44ff44;
-            opacity: 0.6;
-        }
-        
-        .task.in_progress {
-            border-left-color: #ffaa00;
-        }
-        
-        .task-title {
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-        
-        .task-meta {
-            font-size: 13px;
-            color: #888;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        
-        .status-badge.done {
-            background: #44ff44;
-            color: #000;
-        }
-        
-        .status-badge.in_progress {
-            background: #ffaa00;
-            color: #000;
-        }
-        
-        .status-badge.pending {
-            background: #888;
-            color: #fff;
-        }
-        
-        .status-badge.active {
-            background: #4a9eff;
-            color: #fff;
-        }
-        
-        .cron-item {
-            padding: 10px;
-            background: #252525;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .cron-time {
-            color: #4a9eff;
-            font-weight: 500;
-        }
-        
-        .activity-item {
-            padding: 10px;
-            background: #252525;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 13px;
-        }
-        
-        .activity-time {
-            color: #888;
-            font-size: 12px;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-        }
-        
-        .stat-card {
-            background: #252525;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 20px;
-            font-weight: 600;
-            color: #4a9eff;
-            margin-bottom: 4px;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #888;
-        }
-        
-        .blocker {
-            background: #2a1a1a;
-            border-left: 4px solid #ff4444;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .milestone {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            background: #252525;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        @media (max-width: 600px) {
-            body {
-                padding: 12px;
-            }
-            
-            .section {
-                padding: 16px;
-            }
-            
-            .section-title {
-                font-size: 16px;
-            }
+        .glass {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 116, 139, 0.3);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>🚀 Rocket Mission Control</h1>
-            <div class="last-updated" id="lastUpdated">Loading...</div>
-        </header>
-        
-        <div class="section">
-            <div class="section-title">📊 Current Status</div>
-            <div class="status-grid" id="statusGrid">
-                <div class="status-item">
-                    <strong>Loading...</strong>
+<body class="bg-background text-gray-100 font-sans antialiased">
+    <div class="min-h-screen p-4 md:p-8">
+        <div class="max-w-7xl mx-auto">
+            <!-- Header -->
+            <header class="mb-8 fade-in">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                            🚀 Rocket Status Dashboard
+                        </h1>
+                        <p class="text-gray-400 mt-2">Real-time agent activity & project monitoring</p>
+                    </div>
+                    <div class="text-right">
+                        <div id="status-indicator" class="flex items-center gap-2 mb-2">
+                            <div class="w-3 h-3 bg-success rounded-full pulse-slow"></div>
+                            <span id="agent-status" class="text-sm font-medium text-success">ACTIVE</span>
+                        </div>
+                        <p id="last-updated" class="text-xs text-gray-500">Loading...</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">🎯 Your Tasks</div>
-            <div id="kyleTasks">
-                <div class="task">Loading...</div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">🤖 Rocket's Tasks</div>
-            <div id="rocketTasks">
-                <div class="task">Loading...</div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">⏰ Scheduled Tasks</div>
-            <div id="cronSchedule">
-                <div class="cron-item">Loading...</div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">🚧 Blockers</div>
-            <div id="blockers">
-                <div class="blocker">Loading...</div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">📈 Quick Stats</div>
-            <div class="stats-grid" id="statsGrid">
-                <div class="stat-card">
-                    <div class="stat-value">...</div>
-                    <div class="stat-label">Loading</div>
+            </header>
+
+            <!-- Current Activity -->
+            <section id="current-activity" class="mb-8 fade-in glass rounded-lg p-6 border-l-4 border-primary">
+                <h2 class="text-sm font-semibold text-gray-400 uppercase mb-3">Current Activity</h2>
+                <div class="flex items-start gap-4">
+                    <div class="w-2 h-2 bg-primary rounded-full pulse-slow mt-2"></div>
+                    <div class="flex-1">
+                        <p id="current-task" class="text-xl font-medium text-gray-100 mb-1">Loading...</p>
+                        <p id="current-time" class="text-sm text-gray-400"></p>
+                    </div>
                 </div>
+            </section>
+
+            <!-- Main Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Projects -->
+                <section class="lg:col-span-2 glass rounded-lg p-6 fade-in">
+                    <h2 class="text-lg font-semibold mb-4">Active Projects</h2>
+                    <div id="projects-list" class="space-y-4">
+                        <!-- Projects loaded via JS -->
+                    </div>
+                </section>
+
+                <!-- Metrics -->
+                <section class="glass rounded-lg p-6 fade-in">
+                    <h2 class="text-lg font-semibold mb-4">Metrics</h2>
+                    <div id="metrics-grid" class="space-y-3">
+                        <!-- Metrics loaded via JS -->
+                    </div>
+                </section>
             </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">🏆 Milestones</div>
-            <div id="milestones">
-                <div class="milestone">Loading...</div>
+
+            <!-- Secondary Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Cron Schedule -->
+                <section class="glass rounded-lg p-6 fade-in">
+                    <h2 class="text-lg font-semibold mb-4">Automated Tasks</h2>
+                    <div id="cron-jobs" class="space-y-3">
+                        <!-- Cron jobs loaded via JS -->
+                    </div>
+                </section>
+
+                <!-- Recent Activity -->
+                <section class="glass rounded-lg p-6 fade-in">
+                    <h2 class="text-lg font-semibold mb-4">Recent Activity</h2>
+                    <div id="activity-feed" class="space-y-3">
+                        <!-- Activity loaded via JS -->
+                    </div>
+                </section>
             </div>
-        </div>
-        
-        <div class="section">
-            <div class="section-title">📝 Recent Activity</div>
-            <div id="recentActivity">
-                <div class="activity-item">Loading...</div>
-            </div>
+
+            <!-- Upcoming Deadlines -->
+            <section class="glass rounded-lg p-6 fade-in">
+                <h2 class="text-lg font-semibold mb-4">Upcoming Deadlines</h2>
+                <div id="deadlines-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Deadlines loaded via JS -->
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="mt-8 text-center text-sm text-gray-500">
+                <p>Rocket AI Agent • Powered by OpenClaw • Auto-updates every 60 seconds</p>
+            </footer>
         </div>
     </div>
-    
-    <script>
-        function formatTime(isoString) {
-            try {
-                const date = new Date(isoString);
-                if (isNaN(date.getTime())) {
-                    return 'Invalid date';
-                }
-                const now = new Date();
-                const diff = now - date;
-                const minutes = Math.floor(diff / 60000);
-                const hours = Math.floor(minutes / 60);
-                const days = Math.floor(hours / 24);
-                
-                if (minutes < 1) return 'Just now';
-                if (minutes < 60) return `${minutes}m ago`;
-                if (hours < 24) return `${hours}h ago`;
-                return `${days}d ago`;
-            } catch (e) {
-                return 'Invalid date';
-            }
-        }
-        
-        function formatCronTime(isoString) {
-            if (!isoString || isoString.includes('Every') || isoString.includes('every')) {
-                return isoString;
-            }
-            try {
-                const date = new Date(isoString);
-                if (isNaN(date.getTime())) {
-                    return isoString;
-                }
-                return date.toLocaleString('en-US', { 
-                    weekday: 'short', 
-                    hour: 'numeric', 
-                    minute: '2-digit',
-                    hour12: true 
-                });
-            } catch (e) {
-                return isoString;
-            }
-        }
-        
-        async function loadDashboard() {
-            try {
-                const response = await fetch('./dashboard.json');
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                const data = await response.json();
-                
-                // Last updated
-                document.getElementById('lastUpdated').textContent = 
-                    `Last updated: ${formatTime(data.lastUpdated)}`;
-                
-                // Status
-                const statusGrid = document.getElementById('statusGrid');
-                statusGrid.innerHTML = `
-                    <div class="status-item">
-                        <strong>Rocket:</strong>
-                        ${data.status.rocket}
-                    </div>
-                    <div class="status-item">
-                        <strong>Kyle:</strong>
-                        ${data.status.kyle}
-                    </div>
-                    <div class="status-item" style="border-left-color: #ff4444;">
-                        <strong>Blocked:</strong>
-                        ${data.status.blocked}
-                    </div>
-                `;
-                
-                // Kyle's tasks
-                const kyleTasks = document.getElementById('kyleTasks');
-                kyleTasks.innerHTML = data.tasks.kyle.map(task => `
-                    <div class="task ${task.priority} ${task.status}">
-                        <div class="task-title">${task.task}</div>
-                        <div class="task-meta">
-                            <span class="status-badge ${task.status}">${task.status.replace('_', ' ')}</span>
-                            <span>📅 ${task.deadline}</span>
-                        </div>
-                    </div>
-                `).join('');
-                
-                // Rocket's tasks
-                const rocketTasks = document.getElementById('rocketTasks');
-                rocketTasks.innerHTML = data.tasks.rocket.map(task => `
-                    <div class="task ${task.priority} ${task.status}">
-                        <div class="task-title">${task.task}</div>
-                        <div class="task-meta">
-                            <span class="status-badge ${task.status}">${task.status.replace('_', ' ')}</span>
-                            <span>📅 ${task.deadline}</span>
-                        </div>
-                    </div>
-                `).join('');
-                
-                // Cron schedule
-                const cronSchedule = document.getElementById('cronSchedule');
-                cronSchedule.innerHTML = data.cronSchedule.map(cron => `
-                    <div class="cron-item">
-                        <div><span class="cron-time">${formatCronTime(cron.time)}</span> - ${cron.task}</div>
-                        <div style="color: #888; font-size: 12px; margin-top: 4px;">${cron.description}</div>
-                    </div>
-                `).join('');
-                
-                // Blockers
-                const blockers = document.getElementById('blockers');
-                blockers.innerHTML = Object.entries(data.blockers).map(([key, value]) => `
-                    <div class="blocker">
-                        <strong>${key.replace('_', ' ')}:</strong> ${value}
-                    </div>
-                `).join('');
-                
-                // Stats
-                const statsGrid = document.getElementById('statsGrid');
-                statsGrid.innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-value">${data.quickStats.btcPrice}</div>
-                        <div class="stat-label">Bitcoin</div>
-                        <div style="font-size: 12px; color: ${data.quickStats.btcChange24h.startsWith('-') ? '#ff4444' : '#44ff44'}; margin-top: 4px;">
-                            ${data.quickStats.btcChange24h}
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${data.quickStats.twitterAccounts}</div>
-                        <div class="stat-label">Twitter Accounts</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${data.quickStats.contentPagesReady}</div>
-                        <div class="stat-label">Content Pages</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${data.quickStats.conwayProgress}</div>
-                        <div class="stat-label">Conway Research</div>
-                    </div>
-                `;
-                
-                // Milestones
-                const milestones = document.getElementById('milestones');
-                milestones.innerHTML = Object.entries(data.milestones).map(([key, value]) => {
-                    const parts = value.split(' ');
-                    const emoji = parts[0];
-                    const rest = parts.slice(1).join(' ');
-                    return `
-                        <div class="milestone">
-                            <span style="font-size: 18px;">${emoji}</span>
-                            <span>${key.replace(/_/g, ' ')} - ${rest}</span>
-                        </div>
-                    `;
-                }).join('');
-                
-                // Recent activity
-                const recentActivity = document.getElementById('recentActivity');
-                recentActivity.innerHTML = data.recentActivity.slice(0, 5).map(activity => `
-                    <div class="activity-item">
-                        <div>${activity.action}</div>
-                        <div class="activity-time">${formatTime(activity.timestamp)} • ${activity.category}</div>
-                    </div>
-                `).join('');
-                
-            } catch (error) {
-                console.error('Failed to load dashboard:', error);
-                document.getElementById('lastUpdated').textContent = `Error loading dashboard: ${error.message}`;
-                document.getElementById('lastUpdated').style.color = '#ff4444';
-            }
-        }
-        
-        // Load dashboard on page load
-        loadDashboard();
-        
-        // Auto-refresh every 60 seconds
-        setInterval(loadDashboard, 60000);
-    </script>
+
+    <script src="dashboard.js"></script>
 </body>
 </html>
